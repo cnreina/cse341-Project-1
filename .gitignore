@@ -5,6 +5,7 @@
 cnrDocs
 cnrSecret
 images
+*.pdf
 
 # Logs
 logs
