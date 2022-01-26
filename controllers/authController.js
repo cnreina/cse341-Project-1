@@ -12,7 +12,7 @@ const User                  = require(APP_CWD + '/models/userSchema');
 
 
 const SENDGRID_FILE_PATH    = APP_CWD + '/cnrSecret/sendgridconnectionstring.txt';
-let   SENDGRID_KEY          = '';
+let   SENDGRID_KEY_STRING   = '';
 let   sendGridTransporter;
 exports.startSendGrid = () => {
   fileSystem.readFile(SENDGRID_FILE_PATH, (error, fileContent) => {
@@ -22,8 +22,8 @@ exports.startSendGrid = () => {
           if(!fileContent || fileContent.isEmpty){
             console.log('startSendGrid ERROR: No fileContent');
           };
-          SENDGRID_KEY = fileContent.toString();
-          sendGridTransporter = nodemailer.createTransport(sendgridTransport({auth: {api_key: SENDGRID_KEY}}));
+          SENDGRID_KEY_STRING = process.env.SENDGRID_KEY_STRING || fileContent.toString();
+          sendGridTransporter = nodemailer.createTransport(sendgridTransport({auth: {api_key: SENDGRID_KEY_STRING}}));
           console.log('Started SendGrid');
         };
     });
