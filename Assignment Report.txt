@@ -15,7 +15,7 @@ Updates/resets password.
 
 4. Parts of the assignment that are not yet working correctly:
 
-Hosting in Heroku.
+Pushing this version to Heroku.
 
 
 5. The "coolest" thing learned while completing this assignment:
@@ -36,7 +36,7 @@ N/A
 8. Justification for selecting the category:
 
 Implementing own code without copy-paste or checking other people's code.
-
+Improved the pdf presentation for invoices.
 
 
 Carlos N Reina
