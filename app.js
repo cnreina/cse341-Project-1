@@ -25,7 +25,7 @@
   heroku logs --tail
   heroku repo:reset --app appname
 
-  
+
   https://devcenter.heroku.com/articles/preparing-a-codebase-for-heroku-deployment
   https://devcenter.heroku.com/articles/heroku-cli#download-and-install
   https://devcenter.heroku.com/articles/git#tracking-your-app-in-git
@@ -62,6 +62,7 @@ const User                = require(APP_CWD + '/models/userSchema');
 // CONTROLLERS
 const sessionController   = require(APP_CWD + '/controllers/sessionController');
 const authController      = require(APP_CWD + '/controllers/authController');
+const errorController     = require(APP_CWD + '/controllers/errorController');
 const csrfProtection      = csrf();
 const fileStorage         = multer.diskStorage({destination: (req, file, callBack) => {
     callBack(null, 'images');
@@ -88,7 +89,6 @@ const homeRoutes    = require(APP_CWD + '/routes/homeRoutes');
 const userRoutes    = require(APP_CWD + '/routes/userRoutes');
 const storeRoutes   = require(APP_CWD + '/routes/storeRoutes');
 const authRoutes    = require(APP_CWD + '/routes/authRoutes');
-const errorRoutes   = require(APP_CWD + '/routes/errorRoutes');
 
 
 // ********** EXPRESS APP
@@ -116,16 +116,18 @@ app.use(homeRoutes);
 app.use(authRoutes);
 app.use(userRoutes);
 app.use(storeRoutes);
-app.use(errorRoutes);
+
+app.use('/', errorController.get404View);
 
 app.use((error, req, res, next) => {
-  res.status(500).render('500View', {
-    pageTitle:        'Error!',
+  res.status(500).render('error/500View', {
+    pageTitle:        'Error',
     path:             '/500',
     isAuthenticated:  req.session.isLoggedIn,
     error:            error
   });
 });
+
 
 // ********** START SERVER
 fileSystem.readFile(MONGODB_FILE_PATH, (error, fileContent) => {
@@ -140,7 +142,7 @@ fileSystem.readFile(MONGODB_FILE_PATH, (error, fileContent) => {
       app.listen(PORT);
     })
     .catch(err => {
-      console.log(err);
+      console.log('mongoose.connect ERROR: ', err);
     });
   }
 });
