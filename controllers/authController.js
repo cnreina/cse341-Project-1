@@ -11,22 +11,11 @@ const fileSystem            = require('fs');
 const User                  = require(APP_CWD + '/models/userSchema');
 
 
-const SENDGRID_FILE_PATH    = APP_CWD + '/cnrSecret/sendgridconnectionstring.txt';
-let   SENDGRID_KEY_STRING   = '';
-let   sendGridTransporter;
+let sendGridTransporter;
 exports.startSendGrid = () => {
-  fileSystem.readFile(SENDGRID_FILE_PATH, (error, fileContent) => {
-        if (error) {
-          console.log('startSendGrid ERROR: ', error);
-        }else{
-          if(!fileContent || fileContent.isEmpty){
-            console.log('startSendGrid ERROR: No fileContent');
-          };
-          SENDGRID_KEY_STRING = process.env.SENDGRID_KEY_STRING || fileContent.toString();
-          sendGridTransporter = nodemailer.createTransport(sendgridTransport({auth: {api_key: SENDGRID_KEY_STRING}}));
-          console.log('Started SendGrid');
-        };
-    });
+    SENDGRID_KEY_STRING = process.env.SENDGRID_KEY_STRING;
+    sendGridTransporter = nodemailer.createTransport(sendgridTransport({auth: {api_key: SENDGRID_KEY_STRING}}));
+    console.log('Started SendGrid');
 };
 
 exports.isLogedIn = (req, res, next) => {

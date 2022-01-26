@@ -30,31 +30,33 @@
   https://devcenter.heroku.com/articles/heroku-cli#download-and-install
   https://devcenter.heroku.com/articles/git#tracking-your-app-in-git
   https://devcenter.heroku.com/articles/deploying-nodejs
+  https://devcenter.heroku.com/articles/config-vars
 
 */
 
 
-// CONSTANTS
-const APP_CWD                   = process.cwd();
-const PORT                      = process.env.PORT || 3000;
-const HEROKU_APP_URL            = "https://cse341nodejsapp.herokuapp.com/";
-const CORS_OPTIONS              = { origin: HEROKU_APP_URL, optionsSuccessStatus: 200 };
-const MONGODB_OPTIONS           = {useUnifiedTopology: true, useNewUrlParser: true, family: 4};
-const MONGODB_FILE_PATH         = APP_CWD + '/cnrSecret/mongodbconnectionstring.txt';
-let   MONGODB_CONNECTION_STRING = '';
-let   sessionStore              = '';
-
-// INCLUDES
+require('dotenv').config();
 const express             = require('express');
 const session             = require('express-session');
 const bodyParser          = require('body-parser');
-const mongoose            = require('mongoose');
-const MongoDBStore        = require('connect-mongodb-session')(session);
-const cors                = require('cors');
+
+// MongoDB
+const mongoose                  = require('mongoose');
+const MongoDBStore              = require('connect-mongodb-session')(session);
+const MONGODB_OPTIONS           = {useUnifiedTopology: true, useNewUrlParser: true, family: 4};
+const MONGODB_CONNECTION_STRING = process.env.MONGODB_CONNECTION_STRING;
+const sessionStore              = new MongoDBStore({uri: MONGODB_CONNECTION_STRING, collection: 'sessions'});
+
+const APP_CWD                   = process.cwd();
+const PORT                      = process.env.PORT || 3000;
+const HEROKU_APP_URL            = "https://cse341nodejsapp.herokuapp.com/";
+
+const CORS_OPTIONS              = { origin: HEROKU_APP_URL, optionsSuccessStatus: 200 };
+const cors                      = require('cors');
+
 const csrf                = require('csurf');
 const flash               = require('connect-flash');
 const multer              = require('multer');
-const fileSystem          = require('fs');
 
 // ENTITIES
 const User                = require(APP_CWD + '/models/userSchema');
@@ -130,19 +132,11 @@ app.use((error, req, res, next) => {
 
 
 // ********** START SERVER
-fileSystem.readFile(MONGODB_FILE_PATH, (error, fileContent) => {
-  if (error) {
-    console.log('readFile ERROR: ', error);
-  } else {
-    MONGODB_CONNECTION_STRING = process.env.MONGODB_CONNECTION_STRING || fileContent.toString();
-    sessionStore              = new MongoDBStore({uri: MONGODB_CONNECTION_STRING, collection: 'sessions'});
-    mongoose.connect(MONGODB_CONNECTION_STRING, MONGODB_OPTIONS).then(result => {
-      console.log('Started MongoDB');
-      authController.startSendGrid();
-      app.listen(PORT);
-    })
-    .catch(err => {
-      console.log('mongoose.connect ERROR: ', err);
-    });
-  }
+mongoose.connect(MONGODB_CONNECTION_STRING, MONGODB_OPTIONS).then(result => {
+  console.log('Started MongoDB');
+  authController.startSendGrid();
+  app.listen(PORT);
+})
+.catch(err => {
+  console.log('mongoose.connect ERROR: ', err);
 });
