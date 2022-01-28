@@ -53,19 +53,19 @@ const HEROKU_APP_URL            = "https://cse341nodejsapp.herokuapp.com/";
 const CORS_OPTIONS              = { origin: HEROKU_APP_URL, optionsSuccessStatus: 200 };
 const cors                      = require('cors');
 
-const csrf                = require('csurf');
-const flash               = require('connect-flash');
-const multer              = require('multer');
+const csrf                      = require('csurf');
+const flash                     = require('connect-flash');
+const multer                    = require('multer');
 
 // ENTITIES
-const User                = require(APP_CWD + '/models/userSchema');
+const User                      = require(APP_CWD + '/models/userSchema');
 
 // CONTROLLERS
-const sessionController   = require(APP_CWD + '/controllers/sessionController');
-const authController      = require(APP_CWD + '/controllers/authController');
-const errorController     = require(APP_CWD + '/controllers/errorController');
-const csrfProtection      = csrf();
-const fileStorage         = multer.diskStorage({destination: (req, file, callBack) => {
+const sessionController         = require(APP_CWD + '/controllers/sessionController');
+const authController            = require(APP_CWD + '/controllers/authController');
+const errorController           = require(APP_CWD + '/controllers/errorController');
+const csrfProtection            = csrf();
+const fileStorage               = multer.diskStorage({destination: (req, file, callBack) => {
     callBack(null, 'images');
   },
   filename: (req, file, callBack) => {
